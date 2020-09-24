@@ -1,0 +1,10 @@
+.user img{
+	display: none;
+}
+
+.user:hover img{
+	display: inline-block;
+	width: 100px !important;
+	height: 100px !important;
+	margin-left: 20px;
+}

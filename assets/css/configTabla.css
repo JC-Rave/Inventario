@@ -1,0 +1,10 @@
+#suministra, #ver_suministra, #provee, #new_pedido, #tb_seleccionados, #tb_editarPed{
+	table-layout: auto;
+}
+
+#suministra td, #ver_suministra td, #provee .config, #new_pedido .config, 
+#tb_seleccionados td, #tb_editarPed .config{
+	word-wrap: break-word;
+	max-width: 300px;
+	white-space: pre-line;
+}

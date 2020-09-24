@@ -1,0 +1,8 @@
+td.sub_tabla{
+	background: url('http://localhost/plantilla/assets/img/abrir_detalles.png') no-repeat center center;
+	cursor: pointer;
+}
+
+tr.shown td.sub_tabla{
+	background: url('http://localhost/plantilla/assets/img/cerrar_detalles.png') no-repeat center center;
+}
