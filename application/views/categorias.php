@@ -36,15 +36,7 @@
                     </tr>
                   </thead>
                   <tbody id="tbody_categorias">                        
-                    </tbody>
-                  <tfoot>
-                    <tr>
-                      <th>Categoria</th>
-                      <th>Descripción</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </tfoot>
+                  </tbody>
                 </table>                
               </div>
               <!-- /.card-body -->

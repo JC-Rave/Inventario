@@ -83,7 +83,7 @@ class Galeria_controller extends CI_Controller {
 					//consulto si hubo errores en la transaccion
 					$men[]='Error al registrar. Vuelve a intentarlo en unos minutos, si el problema persiste recargar la pagina.';
 					$men[]='Imagen registrada con exito.';
-					$resultado=$this->transStatus($men, $data);
+					$resultado=$this->transStatus($men, [$data, '']);
 				}
 			} catch (Error $e) {
 				//cancelo los procesos generados desde que se hizo la transaccion.

@@ -1,14 +1,14 @@
 $(document).ready(iniciar);
-var foco;
-var data;
-var filaPed;
-var filaPro;
-var desGeneral;
-var desIndividual;
-var observacion;
-var promedio;
-var total;
-var actual;
+var foco="";
+var data=[];
+var filaPed="";
+var filaPro="";
+var desGeneral="";
+var desIndividual=[];
+var observacion="";
+var promedio=0;
+var total=0;
+var actual="";
 var pedido;
 
 var tb_materiales;

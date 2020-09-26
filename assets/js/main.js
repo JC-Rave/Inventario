@@ -52,11 +52,7 @@ function datatable() {
           "colvis": "Visibilidad"
       }
     },
-<<<<<<< HEAD
-    "dom":'<"row"<"col-sm-12 col-md-7"<"#filtros.row pl-2"<"#filtro.w-auto mr-3">>><"col-sm-12 col-md-5"f>><"row"<"table-responsive p-0"<"col-sm-12 col-md-12"rt>>><"row"<"col-sm-12 col-md-8"i><"col-sm-12 col-md-4 d-flex align-items-center justify-content-center"p>>',
-=======
     "dom":'<"row"<"col-5 col-md-7"<"#filtros.row pl-2"<"#filtro.w-auto mr-3">>><"col-4 col-md-5"f>><"row"<"table-responsive p-0"<"col-sm-12 col-md-12"rt>>><"row"<"col-sm-12 col-md-8"i><"col-sm-12 col-md-4 d-flex align-items-center justify-content-center"p>>',
->>>>>>> pedidos
     "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
     "lengthChange": false
   });

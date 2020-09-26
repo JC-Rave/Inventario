@@ -2,10 +2,9 @@
 		<!-- /.content-wrapper -->
 		 
 		<footer class="main-footer">
-			<strong>SENA &copy; 2019-2020 <a href="http://adminlte.io">AdminLTE.io</a>.</strong>
-			Todos los derechos reservados
+			<strong>SENA &copy; <?= Date('Y'); ?> <a href="#">Tecno Academia</a>.</strong>
 			<div class="float-right d-none d-sm-inline-block">
-			  <b>Version</b> 3.0.2 
+			  <b>Version</b> 1.0.0 
 			</div>
 		</footer>
 	</div> 

@@ -1,4 +1,6 @@
 .DS_Store
+assets/files/*.jpg
+assets/files/*.png
 
 application/cache/*
 !application/cache/index.html

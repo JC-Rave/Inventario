@@ -108,7 +108,7 @@ CREATE TABLE `urls_productos` (
 
 CREATE TABLE `consumibles` (
   `id_consumible` INT(10) UNSIGNED NOT NULL,
-  `cantidad_consumible` SMALLINT(5) UNSIGNED NOT NULL,
+  `cantidad_consumible` SMALLINT(5) NOT NULL,
   FOREIGN KEY(`id_consumible`) REFERENCES `productos`(`id_producto`),
   PRIMARY KEY(`id_consumible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
@@ -116,7 +116,7 @@ CREATE TABLE `consumibles` (
 CREATE TABLE `historial_consumible` (
   `fecha` DATE NOT NULL,
   `consumible` INT(10) UNSIGNED NOT NULL,
-  `cantidad` SMALLINT(5) UNSIGNED NOT NULL,
+  `cantidad` SMALLINT(5) NOT NULL,
   FOREIGN KEY(`consumible`) REFERENCES `consumibles`(`id_consumible`),
   PRIMARY KEY(`fecha`, `consumible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
@@ -234,7 +234,7 @@ CREATE OR REPLACE FUNCTION reg_pedido(usuario_pedido CHAR(11), estado_pedido VAR
   END
 //
 
-CREATE PROCEDURE editar_pedido(codigoPed INT, estado_pedido VARCHAR(10))
+CREATE OR REPLACE PROCEDURE editar_pedido(codigoPed INT, estado_pedido VARCHAR(10))
   BEGIN
     CASE estado_pedido
       WHEN 'Pendiente' THEN
@@ -255,7 +255,7 @@ CREATE PROCEDURE editar_pedido(codigoPed INT, estado_pedido VARCHAR(10))
   END
 //
 
-CREATE TRIGGER reg_historial AFTER INSERT ON `consumibles`
+CREATE OR REPLACE TRIGGER reg_historial AFTER INSERT ON `consumibles`
 FOR EACH ROW
   BEGIN
     IF NEW.cantidad_consumible!=0 THEN
@@ -265,16 +265,24 @@ FOR EACH ROW
   END
 //
 
-CREATE TRIGGER edit_historial AFTER UPDATE ON `consumibles`
+CREATE OR REPLACE TRIGGER edit_historial AFTER UPDATE ON `consumibles`
 FOR EACH ROW
   BEGIN
+  
     IF (SELECT `consumible` FROM `historial_consumible` 
     WHERE `fecha`=CURDATE() AND `consumible`=OLD.id_consumible) IS NULL THEN
       INSERT INTO `historial_consumible` 
-      VALUES(CURDATE(), OLD.id_consumible, NEW.cantidad_consumible);
+      VALUES(CURDATE(), OLD.id_consumible, NEW.cantidad_consumible-OLD.cantidad_consumible);
+
     ELSE
-      UPDATE `historial_consumible` SET `cantidad`=NEW.cantidad_consumible 
-      WHERE `fecha`=CURDATE() AND `consumible`=OLD.id_consumible;
+      UPDATE `historial_consumible` SET `cantidad`= `cantidad`+(NEW.cantidad_consumible-OLD.cantidad_consumible) 
+      WHERE `fecha`=CURDATE() AND `consumible`=OLD.id_consumible;  
+
+      IF (SELECT `cantidad` FROM `historial_consumible`
+      WHERE `fecha`=CURDATE() AND `cantidad`=0) IS NOT NULL THEN
+        DELETE FROM `historial_consumible` WHERE `fecha`=CURDATE() AND `consumible`=OLD.id_consumible;
+
+      END IF;  
     END IF;
   END
 //  

@@ -509,10 +509,10 @@
             array(
                 'field' => 'cantidad',
                 'label' => 'cantidad del material',
-                'rules' => 'required|numeric',
+                'rules' => 'required|is_natural_no_zero',
                 'errors' => array(
                     'required' => 'La %s no puede ser vacia.',
-                    'numeric' => 'La %s debe ser numerio sin puntos ni comas.'
+                    'is_natural_no_zero' => 'La %s debe ser numerico mayor a 0, sin puntos ni comas.'
                 )
             ),
             array(
@@ -576,10 +576,10 @@
             array(
                 'field' => 'edit_cantidad',
                 'label' => 'cantidad del material',
-                'rules' => 'required|numeric',
+                'rules' => 'required|is_natural_no_zero',
                 'errors' => array(
                     'required' => 'La %s no puede ser vacia.',
-                    'numeric' => 'La %s debe ser numerio sin puntos ni comas.'
+                    'is_natural_no_zero' => 'La %s debe ser numerico mayor a 0, sin puntos ni comas.'
                 )
             ),
             array(
