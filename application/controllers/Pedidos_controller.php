@@ -89,47 +89,120 @@ class Pedidos_controller extends CI_Controller {
 			}
 
 			if (!empty($productos) && !empty($estado)) {
+
 				$recuperar=errorException_handlers('eliminar');
 
 				try {
 					$this->db->trans_begin();
 
+					$editar_productos=[];
+					$new_productos=[];
+					$delete_productos=[];
+					foreach ($productos as $producto) {
+						if ($producto[12]=='Pedido') {
+
+							$user_pedido=$this->Pedidos->consultar_usuarioPedido($codigoPed);
+							$medidaProd=$this->Unidadmedida->consultar_idUnidad($producto[4]);
+							$existe=$this->Productos->existProducto(empty($producto[28])?$producto[2]:$producto[28], $codigoPed);
+							$imagen=$producto[20]=='Seleccionar Imagen'?null:$this->Galeria_productos->consultar_idImagen($producto[20]);
+
+							if ($existe[0]) {
+								$aux=0;
+								foreach ($existe[1] as $ext) {
+									$array=array(
+										'id_producto' => $ext->id_producto,
+										'categoria_producto' => $producto[25],
+										'unidad_medida' => $producto[24]=='Devolutivo'?$medidaProd:$producto[19],
+										'nombre_producto' => empty($producto[28])?$producto[2]:$producto[28],
+										'descripcion_producto' => $producto[15],
+										'imagenp' => $imagen
+									);
+
+									array_push($editar_productos, $array);
+									$aux++;
+								}
+
+								$aux=$aux-(int)$producto[5];
+								if ($producto[24]=='Devolutivo' && $aux>0) {
+									for ($i=0; $i<$aux; $i++) { 
+										$array=array(
+											'categoria_producto' => $producto[25],
+											'estado_producto' => null,
+											'unidad_medida' => $producto[24]=='Devolutivo'?$medidaProd:$producto[19],
+											'linea_producto' => null,
+											'usuario_producto' => $user_pedido,
+											'nombre_producto' => empty($producto[28])?$producto[2]:$producto[28],
+											'descripcion_producto' => $producto[15],
+											'precio_producto' => empty($producto[26])?null:$producto[26],
+											'tipo_producto' => 'Pedido',
+											'imagenp' => $imagen
+										);
+
+										array_push($new_productos, $array);
+									}
+
+								}else if ($producto[24]=='Devolutivo' && $aux<0) {
+									for ($i=0; $i>$aux ; $i--) { 
+										array_push($delete_productos, $existe[$i]->id_producto);
+									}
+								}
+
+							}else{
+
+								$array=array(
+									'categoria_producto' => $producto[25],
+									'estado_producto' => null,
+									'unidad_medida' => $producto[24]=='Devolutivo'?$medidaProd:$producto[19],
+									'linea_producto' => null,
+									'usuario_producto' => $user_pedido,
+									'nombre_producto' => $producto[2],
+									'descripcion_producto' => $producto[15],
+									'precio_producto' => empty($producto[26])?null:$producto[26],
+									'tipo_producto' => 'Pedido',
+									'imagenp' => $imagen
+								);
+							}
+						}
+					}
 					$codigos=$this->Detalle_pedido->consultar_producto($codigoPed);
-					if (!empty($codigos)) {
-						$this->Urls_productos->deleteDetalle($codigos);
-						$this->Devolutivos_model->deleteDetalle($codigos);
-						$this->Consumibles->deleteDetalle($codigos);
-					}
 
-					$this->Detalle_pedido->deleteDetalle($codigoPed);
-					if (!empty($codigos)) {
-						$this->Productos->deleteDetalle($codigos);
-					}
+					var_dump($codigos);
+					/* if (!empty($codigos)) {
+					 	$this->Urls_productos->deleteDetalle($codigos);
+					 	$this->Devolutivos_model->deleteDetalle($codigos);
+					 	$this->Consumibles->deleteDetalle($codigos);
+					 }
 
-					$this->Pedidos->editar_pedido($codigoPed, $estado['value']);
-					$this->procesar_datos($productos, $codigoPed);
+					 $this->Detalle_pedido->deleteDetalle($codigoPed);
+					 if (!empty($codigos)) {
+					 	$this->Productos->deleteDetalle($codigos);
+					 }
 
-					if ($estado['value']=='Entregado') {
-						$consumibles=$this->Consumibles->cosultar_idConsumible($codigoPed);
+					 $this->Pedidos->editar_pedido($codigoPed, $estado['value']);
+					 $this->procesar_datos($productos, $codigoPed);
 
-						$devolutivos=$this->Devolutivos_model->cosultar_idDevolutivo($codigoPed);
+					 if ($estado['value']=='Entregado') {
+					 	$consumibles=$this->Consumibles->cosultar_idConsumible($codigoPed);
 
-						if (!empty($consumibles)) {
-							$datos=$this->Consumibles->cosultar_idConsumible($consumibles, true);
+					 	$devolutivos=$this->Devolutivos_model->cosultar_idDevolutivo($codigoPed);
 
-							$this->Productos->editarTipoProducto($consumibles, array('tipo_producto' => 'Consumible'));
-							$this->Consumibles->edit_cantConsumibles($datos);
-						}
+					 	if (!empty($consumibles)) {
+					 		$datos=$this->Consumibles->cosultar_idConsumible($consumibles, true);
 
-						if(!empty($devolutivos)){
-							$this->Productos->editarTipoProducto($devolutivos,array('tipo_producto' => 'Devolutivo'));
-						}
-					}
+					 		$this->Productos->editarTipoProducto($consumibles, array('tipo_producto' => 'Consumible'));
+					 		$this->Consumibles->edit_cantConsumibles($datos);
+					 	}
 
-					//consulto si hubo errores en la transaccion
-					$men[]='Error al editar. Vuelve a intentarlo en unos minutos, si el problema persiste recargar la pagina.';
-					$men[]='Pedido editado con exito.';
-					$resultado=$this->transStatus($men);
+					 	if(!empty($devolutivos)){
+					 		$this->Productos->editarTipoProducto($devolutivos,array('tipo_producto' => 'Devolutivo'));
+					 	}
+					 }
+
+					 //consulto si hubo errores en la transaccion
+					 $men[]='Error al editar. Vuelve a intentarlo en unos minutos, si el problema persiste recargar la pagina.';
+					 $men[]='Pedido editado con exito.';
+					 $resultado=$this->transStatus($men);
+				 	*/
 
 				} catch (Error $e){
 					//cancelo los procesos generados desde que se hizo la transaccion.
@@ -202,7 +275,7 @@ class Pedidos_controller extends CI_Controller {
 					'descripcion_producto' => $producto[15],
 					'precio_producto' => empty($producto[26])?null:$producto[26],
 					'tipo_producto' => 'Pedido',
-					'imagen' => $imagen
+					'imagenp' => $imagen
 				);
 
 				$n=0;

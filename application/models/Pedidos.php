@@ -20,12 +20,12 @@ class Pedidos extends CI_Model {
 		return $datos->result();
 	}
 
-	public function reg_pedido($usuario_pedido, $estado_pedido){
-		$fecha=$estado_pedido=='Pendiente'?1:0;
-		
-		$id=$this->db->query('SELECT reg_pedido('.$usuario_pedido.',"'.$estado_pedido.'",'.$fecha.') AS id')->row();
+	public function reg_pedido($usuario_pedido, $estado_pedido){	
+		$fecha=$estado_pedido=='Pendiente'?date('Y-m-d H:i'):NULL;
+		$sql="INSERT INTO `pedidos` VALUES(NULL, ?, NULL, ?, 0, ?)";
 
-		return $id->id;
+		$this->db->query($sql, array($fecha, $usuario_pedido, $estado_pedido));
+		return $this->db->insert_id();
 	}
 
 	public function editar_pedido($pedido, $estado_pedido){

@@ -102,14 +102,14 @@ CREATE TABLE `urls_productos` (
   `precio` FLOAT(10,2) UNSIGNED NOT NULL,
   `descripcion` TEXT NOT NULL,
   FOREIGN KEY(`id_proveedor`) REFERENCES `proveedores`(`id_proveedor`),
-  FOREIGN KEY(`id_producto`) REFERENCES `productos`(`id_producto`),
+  FOREIGN KEY(`id_producto`) REFERENCES `productos`(`id_producto`) ON DELETE CASCADE,
   PRIMARY KEY(`id_proveedor`,`id_producto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 CREATE TABLE `consumibles` (
   `id_consumible` INT(10) UNSIGNED NOT NULL,
   `cantidad_consumible` SMALLINT(5) NOT NULL,
-  FOREIGN KEY(`id_consumible`) REFERENCES `productos`(`id_producto`),
+  FOREIGN KEY(`id_consumible`) REFERENCES `productos`(`id_producto`) ON DELETE CASCADE,
   PRIMARY KEY(`id_consumible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -117,7 +117,7 @@ CREATE TABLE `historial_consumible` (
   `fecha` DATE NOT NULL,
   `consumible` INT(10) UNSIGNED NOT NULL,
   `cantidad` SMALLINT(5) NOT NULL,
-  FOREIGN KEY(`consumible`) REFERENCES `consumibles`(`id_consumible`),
+  FOREIGN KEY(`consumible`) REFERENCES `consumibles`(`id_consumible`) ON DELETE CASCADE,
   PRIMARY KEY(`fecha`, `consumible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -126,7 +126,7 @@ CREATE TABLE `devolutivo` (
   `placa` VARCHAR(30) COLLATE utf8_spanish2_ci NOT NULL,
   `codigo_sena` VARCHAR(30) COLLATE utf8_spanish2_ci DEFAULT NULL,
   `serial` VARCHAR(30) COLLATE utf8_spanish2_ci NOT NULL,
-  FOREIGN KEY(`id_devolutivo`) REFERENCES `productos`(`id_producto`),
+  FOREIGN KEY(`id_devolutivo`) REFERENCES `productos`(`id_producto`) ON DELETE CASCADE,
   PRIMARY KEY(`id_devolutivo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -137,7 +137,7 @@ CREATE TABLE `mantenimiento_equipos` (
   `fecha_fin` DATE,
   `tipo_matenimiento` SET('Correctivo','Preventivo') COLLATE utf8_spanish2_ci NOT NULL,
   `estado_matenimiento` SET('Vigente','Expirado','Ahora','Anulado','Terminado','En proceso') COLLATE utf8_spanish2_ci NOT NULL,
-  FOREIGN KEY(`devolutivo`) REFERENCES `devolutivo`(`id_devolutivo`),
+  FOREIGN KEY(`devolutivo`) REFERENCES `devolutivo`(`id_devolutivo`) ON DELETE CASCADE,
   PRIMARY KEY(`devolutivo`,`registrado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -165,7 +165,7 @@ CREATE TABLE `detalle_pedido` (
   `proveedor_3` INT(10) UNSIGNED DEFAULT NULL,
   `descripcion` TEXT COLLATE utf8_spanish2_ci NOT NULL,
   FOREIGN KEY (`pedido`) REFERENCES `pedidos`(`id_pedido`),
-  FOREIGN KEY (`producto`) REFERENCES `productos`(`id_producto`),
+  FOREIGN KEY (`producto`) REFERENCES `productos`(`id_producto`) ON DELETE CASCADE,
   FOREIGN KEY (`proveedor_1`) REFERENCES `proveedores`(`id_proveedor`),
   FOREIGN KEY (`proveedor_2`) REFERENCES `proveedores`(`id_proveedor`),
   FOREIGN KEY (`proveedor_3`) REFERENCES `proveedores`(`id_proveedor`),
@@ -219,21 +219,6 @@ CREATE TABLE `salidas` (
 
 
 DELIMITER //
-CREATE OR REPLACE FUNCTION reg_pedido(usuario_pedido CHAR(11), estado_pedido VARCHAR(10), fecha TINYINT(1)) RETURNS INT
-  BEGIN
-    DECLARE id INT;
-
-    IF(fecha) THEN
-      INSERT INTO `pedidos` VALUES(NULL, NULL, NOW(), usuario_pedido, 0, estado_pedido);
-    ELSE
-      INSERT INTO `pedidos` VALUES(NULL, NULL, NULL, usuario_pedido, 0, estado_pedido);  
-    END IF;
-
-    SELECT @@identity INTO id;
-    RETURN id;
-  END
-//
-
 CREATE OR REPLACE PROCEDURE editar_pedido(codigoPed INT, estado_pedido VARCHAR(10))
   BEGIN
     CASE estado_pedido

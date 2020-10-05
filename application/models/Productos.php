@@ -288,6 +288,17 @@ class Productos extends CI_Model {
 		$this->db->delete('productos');
 	}
 
+
+	public function existProducto($nombre, $cod_pedido){
+		$this->db->select('id_producto');
+		$this->db->from('productos');
+		$this->db->join('detalle_pedido', 'detalle_pedido.producto = productos.id_producto');
+		$this->db->where('pedido', $cod_pedido);
+		$this->db->where('nombre_producto', $nombre);
+		$datos=$this->db->get()->result();
+
+		return empty($datos)?[false, '']:[true, $datos];
+	}
 }
 
 /* End of file productos.php */

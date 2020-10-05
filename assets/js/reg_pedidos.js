@@ -9,6 +9,7 @@ var observacion="";
 var promedio=0;
 var total=0;
 var actual="";
+var nom_actual="";
 var pedido;
 
 var tb_materiales;
@@ -65,7 +66,7 @@ function iniciar() {
     $('#precio_prov').keyup(function() {diseño(!error?'':'precio_prov');});
     $('#descripcion_prov').keyup(function() {diseño(!error?'':'descripcion_prov');});
 
-    $("#new_pedido tbody").on("click", 'td.sub_tabla', function () {
+    $("#new_pedido tbody").on("click", '.sub_tabla', function () {
     	var tr=$(this).closest('tr');
     	var row=tb_newPedido.row(tr);
 
@@ -137,7 +138,21 @@ function guardar_editar(proceso) {
 			            }else {
 			            	alerta(respuesta);
 			            }
+
 					}
+
+				}).fail(function (respuesta) {
+				    $("#caja-cargando").hide();
+					Swal.fire({
+			          	position: 'top',
+					  	icon: 'error',
+				 	 	text: 'Error: Proceso fallido. Intentelo mas tarde.',
+					  	showConfirmButton: true
+					}).then((result) => {
+						setTimeout(function() {
+							$(".sidebar-mini").css('padding-right', '0px');
+						},170);
+					});	
 				});
 			}
 		});
@@ -236,7 +251,8 @@ function agregar() {
 	            data[5],
 	            data[6],
 	            data[8],
-	            observacion
+	            observacion,
+	            ''
 	        ];
 
     	}else{
@@ -275,7 +291,8 @@ function agregar() {
 	            data[7],
 	            data[8],
 	            '',
-	            observacion
+	            observacion,
+	            ''
 	        ];
     	}
 
@@ -372,7 +389,8 @@ function editarDetalle() {
             data[24],
             data[25],
             data[26],
-            observacion
+            observacion,
+            data[28]
         ]).draw(false);
 
         $("#config_pedido .close").click();
@@ -549,7 +567,8 @@ function agregarNuevo(producto) {
 			producto,
 			categoria,
 			'',
-			observacion
+			observacion,
+			''
 		]).draw(false).node();
 
 		$(fila).find('td:eq(0)').addClass('sub_tabla');
@@ -575,6 +594,7 @@ function pre_editarNuevo() {
 	$("#btn_editarNew").attr('value', data[24]);
 
     actual=data[2];
+    nom_actual=data[28];
     if (data[24]=='Devolutivo') {
 		$("#caja_unidad").hide();
 		$("#descripcion").attr('style', 'height:124px;');
@@ -675,7 +695,8 @@ function editarNuveo(producto) {
 			producto,
 			categoria,
 			'',
-			observacion			
+			observacion,
+			nom_actual	
 		]).draw(false);
 
 	    $("#config_newProducto .close").click();
@@ -955,11 +976,11 @@ function config_tablas() {
     $("#new_pedido_wrapper .button").html('<label>Pedido</label>');
     $("#provee_wrapper .button").html('<label>Proveedores</label>');
 
-  	visualizarColumnaEntabla(tb_materiales,[7,8,9],false);
-  	visualizarColumnaEntabla(tb_devolutivos,[5,6,7,8],false);
-  	visualizarColumnaEntabla(tb_newPedido,[2,6,7,8,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],false);
-  	visualizarColumnaEntabla(tb_seleccionados,[5,6,7],false);
-  	visualizarColumnaEntabla(tb_provee,[0,4],false);
+  	// visualizarColumnaEntabla(tb_materiales,[7,8,9],false);
+  	// visualizarColumnaEntabla(tb_devolutivos,[5,6,7,8],false);
+  	// visualizarColumnaEntabla(tb_newPedido,[2,6,7,8,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],false);
+  	// visualizarColumnaEntabla(tb_seleccionados,[5,6,7],false);
+  	// visualizarColumnaEntabla(tb_provee,[0,4],false);
 
 	$("#inv_materiales").attr('style', 'width:100% !important;');
 	$("#inv_devolutivos").attr('style', 'width:100% !important;');

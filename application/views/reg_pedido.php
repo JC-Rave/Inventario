@@ -154,6 +154,7 @@
                    <th id="25">value categoria</th>
                    <th id="26">precio producto</th>
                    <th id="27">observacion</th>
+                   <th id="28">nombre actual</th>
                  </tr>
               </thead>
               <tbody>
@@ -242,6 +243,7 @@
                        <td>".$producto->id_categoria."</td>
                        <td>".$producto->precio_producto."</td>
                        <td>".$observacion."</td>
+                       <td>".$producto->nombre_producto."</td>
                       </tr>";
                     endforeach; 
                   endif;
