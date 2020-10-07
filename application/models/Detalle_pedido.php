@@ -62,24 +62,13 @@ class Detalle_pedido extends CI_Model {
 		return $datos->result();
 	}
 
-	public function consultar_producto($codigoPed){
-		$this->db->select('producto');
-		$this->db->from('detalle_pedido');
-		$this->db->join('productos', 'productos.id_producto = detalle_pedido.producto');
-		$this->db->where('tipo_producto', 'Pedido');
-		$this->db->where('pedido', $codigoPed);
-		$codigos=$this->db->get();
-
-		$datos=[];
-		foreach ($codigos->result() as $codigo) {
-        	array_push($datos, $codigo->producto);
-		}
-
-		return $datos;
+	public function editar_productos($datos){
+		$this->db->update_batch('detalle_pedido', $datos, 'producto');
 	}
 
-	public function deleteDetalle($codigoPed){
-		$this->db->delete('detalle_pedido', array('pedido' => $codigoPed));
+	public function deleteDetalle($datos){
+		$this->db->where_in('producto', $datos);
+		$this->db->delete('detalle_pedido');
 	}
 
 }

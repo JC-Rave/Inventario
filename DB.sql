@@ -219,27 +219,6 @@ CREATE TABLE `salidas` (
 
 
 DELIMITER //
-CREATE OR REPLACE PROCEDURE editar_pedido(codigoPed INT, estado_pedido VARCHAR(10))
-  BEGIN
-    CASE estado_pedido
-      WHEN 'Pendiente' THEN
-        IF(SELECT `fecha_pedido` FROM `pedidos` WHERE `id_pedido`=codigoPed) IS NULL THEN
-          UPDATE `pedidos` SET `estado_pedido`=estado_pedido, `fecha_pedido`=NOW() 
-          WHERE `id_pedido`=codigoPed;
-        ELSE
-          UPDATE `pedidos` SET `estado_pedido`=estado_pedido 
-          WHERE `id_pedido`=codigoPed;  
-        END IF;
-      WHEN 'Entregado' THEN
-        UPDATE `pedidos` SET `estado_pedido`=estado_pedido, `fecha_entregado`=NOW() 
-        WHERE `id_pedido`=codigoPed;
-      ELSE
-        UPDATE `pedidos` SET `estado_pedido`=estado_pedido 
-        WHERE `id_pedido`=codigoPed;
-    END CASE;
-  END
-//
-
 CREATE OR REPLACE TRIGGER reg_historial AFTER INSERT ON `consumibles`
 FOR EACH ROW
   BEGIN
@@ -272,7 +251,6 @@ FOR EACH ROW
   END
 //  
 DELIMITER ;
-
 
 INSERT INTO `personas` (`documento_persona`, `nombre_persona`, `apellido_persona`, `telefono_persona`) VALUES
 ('1234567', 'Administrador', '8D', '1234567');

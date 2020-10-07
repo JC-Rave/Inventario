@@ -74,11 +74,6 @@ class Urls_productos extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
-	public function deleteDetalle($datos){
-		$this->db->where_in('id_producto', $datos);
-		$this->db->delete('urls_productos');
-	}
-
 	public function consultar_idProveedor($nombre_producto){
 		$this->db->distinct();
 		$this->db->select('urls_productos.id_proveedor');
@@ -92,6 +87,11 @@ class Urls_productos extends CI_Model {
 		$datos=$this->db->get();
 
 		return $datos->result();
+	}
+
+	public function deleteDetalle($datos){
+		$this->db->where_in('id_producto', $datos);
+		$this->db->delete('urls_productos');
 	}
 
 }

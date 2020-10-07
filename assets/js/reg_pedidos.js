@@ -141,19 +141,7 @@ function guardar_editar(proceso) {
 
 					}
 
-				}).fail(function (respuesta) {
-				    $("#caja-cargando").hide();
-					Swal.fire({
-			          	position: 'top',
-					  	icon: 'error',
-				 	 	text: 'Error: Proceso fallido. Intentelo mas tarde.',
-					  	showConfirmButton: true
-					}).then((result) => {
-						setTimeout(function() {
-							$(".sidebar-mini").css('padding-right', '0px');
-						},170);
-					});	
-				});
+				})
 			}
 		});
 	}else{
@@ -552,7 +540,7 @@ function agregarNuevo(producto) {
 	                <i class="fas fa-trash"></i>
 	            </button>
 	        </center>`,
-			'pedido',
+			'Pedido',
 			'',
 			'',
 			newdescripcion,
@@ -680,7 +668,7 @@ function editarNuveo(producto) {
 	                <i class="fas fa-trash"></i>
 	            </button>
 	        </center>`,
-			'pedido',
+			'Pedido',
 	        '',
 			'',
 			newdescripcion,
@@ -976,11 +964,14 @@ function config_tablas() {
     $("#new_pedido_wrapper .button").html('<label>Pedido</label>');
     $("#provee_wrapper .button").html('<label>Proveedores</label>');
 
-  	// visualizarColumnaEntabla(tb_materiales,[7,8,9],false);
-  	// visualizarColumnaEntabla(tb_devolutivos,[5,6,7,8],false);
-  	// visualizarColumnaEntabla(tb_newPedido,[2,6,7,8,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],false);
-  	// visualizarColumnaEntabla(tb_seleccionados,[5,6,7],false);
-  	// visualizarColumnaEntabla(tb_provee,[0,4],false);
+  	visualizarColumnaEntabla(tb_materiales,[7,8,9],false);
+  	visualizarColumnaEntabla(tb_devolutivos,[5,6,7,8],false);
+  	visualizarColumnaEntabla(tb_newPedido,[2,6,7,8,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],false);
+  	visualizarColumnaEntabla(tb_seleccionados,[5,6,7],false);
+  	visualizarColumnaEntabla(tb_provee,[0,4],false);
+
+  	filtrartabla(tb_materiales,7,'Consumible');
+  	filtrartabla(tb_devolutivos,5,'Devolutivo');
 
 	$("#inv_materiales").attr('style', 'width:100% !important;');
 	$("#inv_devolutivos").attr('style', 'width:100% !important;');
@@ -1014,7 +1005,7 @@ function invalidar_campos(aux, nombre, categoria, cantidad, unidad, descripcion)
 	error=true;
 	if (aux) {
         $('#newNombre').addClass('is-invalid');
-        $('#error_newNombre').html('Ya existe un producto con ese nombre');
+        $('#error_newNombre').html('Ya existe un producto con ese nombre o lo ha registrado en otro pedido');
     }
 
 	if (!nombre.length) {

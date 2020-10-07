@@ -332,9 +332,8 @@ class Materiales_controller extends CI_Controller {
 		$mensaje='';
 
 		if (strcasecmp($reglas[0], $reglas[1])!=0 && $reglas[1]!='' || $reglas[2]!=$reglas[3]) {
-			if ($this->Productos->validar_unico('nombre_producto', $reglas[1], 
-			$reglas[2])) {
-				$mensaje='El usuario ya posee un material con ese nombre.';
+			if ($this->Productos->validar_unico('nombre_producto', $reglas[1], $reglas[2])) {
+				$mensaje='El usuario ya posee un material con ese nombre y/o se encuentra en un pedido.';
 				$error=true;
 			}
 
@@ -345,6 +344,7 @@ class Materiales_controller extends CI_Controller {
 
 		return array($error, $mensaje);
 	}
+
 	public function consultarMateriales(){
 		$array=$this->Productos->consultar_materiales();
 		$array+=['aviso'=>true,'texto'=>'consulta hecha con exito'];

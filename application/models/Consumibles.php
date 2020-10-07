@@ -22,14 +22,9 @@ class Consumibles extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
-	public function deleteDetalle($datos){
-		$this->db->where_in('id_consumible', $datos);
-		$this->db->delete('consumibles');
-	}
 	public function edit_cantConsumibles($datos){
 		$this->db->update_batch('consumibles', $datos, 'id_consumible');
 	}
-
 
 	public function cosultar_idConsumible($codes, $proceso=false){
 		$select=$proceso?'id_consumible, cantidad_consumible, cantidad':'id_consumible';

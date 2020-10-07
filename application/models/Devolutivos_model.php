@@ -212,10 +212,6 @@ class Devolutivos_model extends CI_Model {
 		}	
 	}
 
-	public function deleteDetalle($datos){
-		$this->db->where_in('id_devolutivo', $datos);
-		$this->db->delete('devolutivo');
-	}
 	public function cosultar_idDevolutivo($pedido){
 		$this->db->select('id_devolutivo');
 		$this->db->from('devolutivo');

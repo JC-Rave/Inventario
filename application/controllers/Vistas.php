@@ -92,16 +92,28 @@ class Vistas extends CI_Controller {
 		$this->load->model(array('Productos', 'Galeria_productos', 
 			'Categorias_model', 'Unidadmedida', 'Proveedores', 'Detalle_pedido', 'Pedidos'));
 
-		!$pedido?$id_usuario='':$id_usuario=$this->Pedidos->consultar_usuarioPedido($pedido);
-		$datos['materiales']=$this->Productos->consultar_productos($id_usuario);
-		$datos['devolutivos']=$this->Productos->consultar_productos($id_usuario, 'devolutivos');
-		$datos['proveedores']=$this->Proveedores->consultar_proveedores(true);
-		$datos['imagenes']=$this->Galeria_productos->consultar_imagenes();
-		$datos['categorias']=$this->Categorias_model->preSelect();
-		$datos['medidas']=$this->Unidadmedida->preSelect();
-		$datos['productos']=!$pedido?'':$this->Detalle_pedido->detallePedido($pedido);
+		if (!$pedido) {
+			$id_usuario='';
+			$estado='';
+		}else{
+			$id_usuario=$this->Pedidos->consultar_usuarioPedido($pedido);
+			$estado=$this->Pedidos->consultar_estadoPedido($pedido);
+		}
 
-		$this->vista('reg_pedido', $datos);
+		if ($estado!='' && $estado!='En proceso') {
+			show_404();
+
+		}else{
+			$datos['materiales']=$this->Productos->consultar_productos($id_usuario);
+			$datos['devolutivos']=$this->Productos->consultar_productos($id_usuario, 'devolutivos');
+			$datos['proveedores']=$this->Proveedores->consultar_proveedores(true);
+			$datos['imagenes']=$this->Galeria_productos->consultar_imagenes();
+			$datos['categorias']=$this->Categorias_model->preSelect();
+			$datos['medidas']=$this->Unidadmedida->preSelect();
+			$datos['productos']=!$pedido?'':$this->Detalle_pedido->detallePedido($pedido);
+
+			$this->vista('reg_pedido', $datos);
+		}
 	}
 
 	public function adm_solicitudes(){

@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
  
 class Productos extends CI_Model {		
+
 	public function getUltimoIdInsertado($bool){	
 		if ($bool) {
 			$consulta="SELECT * FROM productos ORDER BY id_producto DESC LIMIT 1";
@@ -23,7 +24,7 @@ class Productos extends CI_Model {
 	}
 
 	public function consultar_productos($usuario, $tipo='materiales'){
-		$subconsulta='estado_producto IN(SELECT id_estado FROM estados_productos WHERE descripcion_estado!="de baja") OR estado_producto IS NULL AND tipo_producto!="Pedido"';
+		$subconsulta='estado_producto IN(SELECT id_estado FROM estados_productos WHERE descripcion_estado!="de baja") OR estado_producto IS NULL';
 
 		$select='nombre_producto, descripcion_producto, categoria_producto, nombre_categoria, tipo_producto, galeria_productos.nombre vImagen, galeria_productos.imagen';
 		$select.=$tipo=='materiales'?', cantidad_consumible, nombre_unidad':', precio_producto';
@@ -182,7 +183,7 @@ class Productos extends CI_Model {
 	}
 
 	public function consultar_materiales(){
-		$this->db->select('nombre_categoria, nombre_unidad, nombre_linea, id_usuario, nombre_persona, apellido_persona, productos.*,galeria_productos.*, cantidad_consumible,tipo_producto');
+		$this->db->select('nombre_categoria, nombre_unidad, nombre_linea, id_usuario, nombre_persona, apellido_persona, productos.*,galeria_productos.*, cantidad_consumible');
 		$this->db->from('productos');
 		$this->db->join('categorias', 'categorias.id_categoria = productos.categoria_producto');
 		$this->db->join('unidad_medida', 'unidad_medida.id_unidad = productos.unidad_medida');
@@ -271,11 +272,16 @@ class Productos extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
-	public function exiteMaterial($nombre){
+	public function exiteMaterial($nombre, $user_pedido=''){
 		$this->db->select('id_producto');
 		$this->db->from('productos');
 		$this->db->join('consumibles', 'consumibles.id_consumible = productos.id_producto');
-		$this->db->where('usuario_producto', $this->session->documento);
+		if ($user_pedido!='') {
+			$this->db->where('usuario_producto', $user_pedido);
+
+		}else{
+			$this->db->where('usuario_producto', $this->session->documento);
+		}
 		$this->db->where('tipo_producto!=', 'Pedido');
 		$this->db->where('nombre_producto', $nombre);
 		$datos=$this->db->get()->row();
@@ -288,7 +294,6 @@ class Productos extends CI_Model {
 		$this->db->delete('productos');
 	}
 
-
 	public function existProducto($nombre, $cod_pedido){
 		$this->db->select('id_producto');
 		$this->db->from('productos');
@@ -298,6 +303,22 @@ class Productos extends CI_Model {
 		$datos=$this->db->get()->result();
 
 		return empty($datos)?[false, '']:[true, $datos];
+	}
+
+	public function editar_productos($datos){
+		$this->db->update_batch('productos', $datos, 'id_producto');
+	}
+
+	public function get_productosEliminar($nombres, $pedido, $proceso=false){
+		$this->db->select('id_producto');
+		$this->db->from('productos');
+		$this->db->join('detalle_pedido', 'detalle_pedido.producto = productos.id_producto');
+		$this->db->where('pedido', $pedido);
+		$this->db->where_not_in('nombre_producto', $nombres);
+		$this->db->where('tipo_producto', $proceso?'Consumible':'Pedido');
+		$datos=$this->db->get();
+
+		return $datos->result();
 	}
 }
 

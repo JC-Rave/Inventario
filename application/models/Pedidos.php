@@ -28,8 +28,25 @@ class Pedidos extends CI_Model {
 		return $this->db->insert_id();
 	}
 
-	public function editar_pedido($pedido, $estado_pedido){
-		$this->db->query('CALL editar_pedido('.$pedido.', "'.$estado_pedido.'")');
+	public function editar_pedido($pedido, $estado_pedido, $total){
+		$fecha=$estado_pedido=='Pendiente' || $estado_pedido=='Entregado'?date('Y-m-d H:i'):NULL;
+
+		if ($estado_pedido=='Pendiente') {
+			$sql='UPDATE `pedidos` SET `fecha_pedido`=?, `estado_pedido`=?, `total`=? WHERE `id_pedido`=?';			
+
+		}else if ($estado_pedido=='En proceso'){
+			$sql='UPDATE `pedidos` SET `fecha_pedido`=?, `estado_pedido`=?, `total`=? WHERE `id_pedido`=?';			
+
+		}else if ($estado_pedido=='Entregado') {
+			$sql='UPDATE `pedidos` SET `fecha_entregado`=?, `estado_pedido`=?, `total`=? WHERE `id_pedido`=?';			
+
+		}else {
+			$sql='UPDATE `pedidos` SET `fecha_entregado`=?, `estado_pedido`=?, `total`=? WHERE `id_pedido`=?';			
+		}
+
+		$this->db->query($sql, array($fecha, $estado_pedido, $total, $pedido));
+
+		// $this->db->query('CALL editar_pedido('.$pedido.', "'.$estado_pedido.'")');
 	}
 
 	public function update($datos){
@@ -45,6 +62,15 @@ class Pedidos extends CI_Model {
 		$id=$this->db->get()->row();
 
 		return $id->usuario_pedido;
+	}
+
+	public function consultar_estadoPedido($pedido){
+		$this->db->select('estado_pedido');
+		$this->db->from('pedidos');
+		$this->db->where('id_pedido', $pedido);
+		$estado=$this->db->get()->row();
+
+		return $estado->estado_pedido;
 	}
 
 }
