@@ -44,7 +44,7 @@
     "jasmine": "^2.5.3",
     "jasmine-core": "^2.5.2",
     "jest": "^22.4.3",
-    "jquery": "^1.12.4",
+    "jquery": "^3.5.0",
     "karma": "^1.4.1",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-cli": "^1.0.1",
